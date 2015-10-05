@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>net.codesup.util</groupId>
 		<artifactId>jaxb-plugin-parent</artifactId>
-		<version>1.0.7-SNAPSHOT</version>
+		<version>1.1.0</version>
 	</parent>
 
 	<name>JAXB plugin utility library</name>
