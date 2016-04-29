@@ -28,8 +28,12 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
+
 import com.sun.tools.xjc.BadCommandLineException;
 import com.sun.tools.xjc.Options;
 import com.sun.tools.xjc.Plugin;
@@ -41,6 +45,39 @@ import com.sun.tools.xjc.Plugin;
  * @author Mirko Klemm 2015-02-07
  */
 public abstract class AbstractPlugin extends Plugin {
+	private static final Set<String> XJC_STANDARD_ARGS = new HashSet<>(Arrays.asList(
+			"-nv",
+			"-extension",
+			"-b",
+			"-d",
+			"-p",
+			"-httpproxy",
+			"-httpproxyfile",
+			"-classpath",
+			"-catalog",
+			"-readOnly",
+			"-npa",
+			"-no-header",
+			"-target",
+			"-encoding",
+			"-enableIntrospection",
+			"-contentForWildcard",
+			"-xmlschema",
+			"-relaxng",
+			"-relaxng-compact",
+			"-dtd",
+			"-wsdl",
+			"-verbose",
+			"-quiet",
+			"-help",
+			"-version",
+			"-fullversion",
+			"-Xinject-code",
+			"-Xlocator",
+			"-Xsync-methods",
+			"-mark-generated",
+			"-episode")
+	);
 	private final ResourceBundle baseResourceBundle;
 	private final ResourceBundle resourceBundle;
 	private final List<Option<?>> options;
@@ -72,33 +109,42 @@ public abstract class AbstractPlugin extends Plugin {
 
 	@Override
 	public int parseArgument(final Options opt, final String[] args, final int i) throws BadCommandLineException, IOException {
+		int count = 0;
 		if (('-' + getOptionName()).equals(args[i])) {
-			return parseOptions(args, i + 1) + 1;
+			count = parseOptions(args, i + 1) +1;
 		}
-		return 0;
+		return count;
 	}
 
 	private int parseOptions(final String[] args, final int startIndex) throws BadCommandLineException {
 		int count = 0;
-		for (final Option<?> option : this.options) {
-			int i;
-			for (i = startIndex; i < args.length && !args[i].startsWith("-X"); i++) {
-				if (option.matches(args[i])) {
+		for (int i = startIndex; i < args.length && !isEndOfPluginArgs(args[i]); i++) {
+			final String currentArg = args[i];
+			boolean hasMatch = false;
+			for (final Option<?> option : this.options) {
+				if (option.matches(currentArg)) {
 					i++;
 					if (args.length > i && !args[i].startsWith("-")) {
 						option.setStringValue(args[i]);
 						count += 2;
+						hasMatch = true;
 					} else {
-						throw new BadCommandLineException(MessageFormat.format(this.baseResourceBundle.getString("exception.missingArgument"), option.getName()));
+						throw new BadCommandLineException(MessageFormat.format(this.baseResourceBundle.getString("exception.missingArgument"), getOptionName().substring(1), option.getName()));
 					}
-				} else {
-					if (option.tryParse(args[i])) {
-						count++;
-					}
+				} else if (option.tryParse(currentArg)) {
+					hasMatch = true;
+					count++;
 				}
+			}
+			if(!hasMatch) {
+				throw new BadCommandLineException(MessageFormat.format(this.baseResourceBundle.getString("exception.unrecognizedArgument"), getOptionName().substring(1), currentArg));
 			}
 		}
 		return count;
+	}
+
+	private boolean isEndOfPluginArgs(final String arg) {
+		return AbstractPlugin.XJC_STANDARD_ARGS.contains(arg) || arg.startsWith("-X");
 	}
 
 	@Override
