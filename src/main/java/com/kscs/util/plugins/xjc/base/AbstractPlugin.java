@@ -144,7 +144,7 @@ public abstract class AbstractPlugin extends Plugin {
 	}
 
 	private boolean isEndOfPluginArgs(final String arg) {
-		return AbstractPlugin.XJC_STANDARD_ARGS.contains(arg) || arg.startsWith("-X");
+		return AbstractPlugin.XJC_STANDARD_ARGS.contains(arg) || arg.startsWith("-X") || arg.startsWith("-B-X");
 	}
 
 	@Override
