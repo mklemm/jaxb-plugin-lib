@@ -38,14 +38,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Logger;
-import sun.util.ResourceBundleEnumeration;
 
 /**
  * @author Mirko Klemm 2015-02-25
@@ -82,7 +83,7 @@ public class PropertyDirectoryResourceBundle extends ResourceBundle {
 	@Override
 	public Enumeration<String> getKeys() {
 		final ResourceBundle parent = this.parent;
-		return new ResourceBundleEnumeration(this.values.keySet(), (parent != null ? parent.getKeys() : null));
+		return new ResourceBundleEnumeration(this.values.keySet(), parent != null ? parent.getKeys() : null);
 	}
 
 	@Override
@@ -167,3 +168,50 @@ public class PropertyDirectoryResourceBundle extends ResourceBundle {
 		}
 	}
 }
+class ResourceBundleEnumeration implements Enumeration<String> {
+
+	private Set<String> set;
+	private Iterator<String> iterator;
+	private Enumeration<String> enumeration; // may remain null
+
+	/**
+	 * Constructs a resource bundle enumeration.
+	 * @param set an set providing some elements of the enumeration
+	 * @param enumeration an enumeration providing more elements of the enumeration.
+	 *        enumeration may be null.
+	 */
+	public ResourceBundleEnumeration(final Set<String> set, final Enumeration<String> enumeration) {
+		this.set = set;
+		this.iterator = set.iterator();
+		this.enumeration = enumeration;
+	}
+
+	String next = null;
+
+	public boolean hasMoreElements() {
+		if (this.next == null) {
+			if (this.iterator.hasNext()) {
+				this.next = this.iterator.next();
+			} else if (this.enumeration != null) {
+				while (this.next == null && this.enumeration.hasMoreElements()) {
+					this.next = this.enumeration.nextElement();
+					if (this.set.contains(this.next)) {
+						this.next = null;
+					}
+				}
+			}
+		}
+		return this.next != null;
+	}
+
+	public String nextElement() {
+		if (hasMoreElements()) {
+			final String result = this.next;
+			this.next = null;
+			return result;
+		} else {
+			throw new NoSuchElementException();
+		}
+	}
+}
+
