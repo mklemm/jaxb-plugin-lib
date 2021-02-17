@@ -1,3 +1,5 @@
 # JAXB XJC plugin utility library
 
-Contains common JAXB plugin functionality, used in [jaxb2-rich-contract-plugin](https://github.com/mklemm/jaxb2-rich-contract-plugin) and [restbinder-xjc-plugin](https://github.com/mklemm/restbinder-xjc-plugin)
+Contains common JAXB plugin functionality.
+
+Visit [my github page](https://github.com/mklemm) for JAXB XJC plugin projects using this library.
