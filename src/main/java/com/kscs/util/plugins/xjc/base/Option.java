@@ -26,7 +26,7 @@ package com.kscs.util.plugins.xjc.base;
 
 import java.lang.reflect.Field;
 
-import com.sun.xml.bind.api.impl.NameConverter;
+import org.glassfish.jaxb.core.api.impl.NameConverter;
 
 /**
  * @author Mirko Klemm 2015-02-13
@@ -75,18 +75,24 @@ public abstract class Option<T> {
 		}
 	}
 
-	public boolean matches(final String arg) {
-		return arg.startsWith("-") && (this.name.equalsIgnoreCase(arg.substring(1)) || this.name.equals(Option.NAME_CONVERTER.toVariableName(arg.substring(1))) );
-	}
-
 	public boolean tryParse(final String arg) {
-		final int equalsIndex = arg.indexOf("=");
-		if(arg.startsWith("-") && equalsIndex > 0 && (this.name.equalsIgnoreCase(arg.substring(1, equalsIndex)) || this.name.equals(Option.NAME_CONVERTER.toVariableName(arg.substring(1, equalsIndex))) )) {
-			setStringValue(arg.substring(equalsIndex+1));
+		final String pluginName = this.plugin.getOptionName().substring(1).toLowerCase();
+		final int equalsIndex = arg.indexOf('=');
+		final String optionName = arg.substring(1 + pluginName.length(), equalsIndex > 0 ? equalsIndex : arg.length());
+		if(arg.toLowerCase().startsWith("-" + pluginName) && (this.name.equalsIgnoreCase(optionName) || this.name.equals(Option.NAME_CONVERTER.toVariableName(optionName)) )) {
+			if(equalsIndex > 0) {
+				setStringValue(arg.substring(equalsIndex+1));
+			} else {
+				setStringValue("y");
+			}
 			return true;
 		} else {
 			return false;
 		}
+	}
+
+	private String getOptionName(final String pluginName, final String arg) {
+		return arg.substring(pluginName.length());
 	}
 }
 

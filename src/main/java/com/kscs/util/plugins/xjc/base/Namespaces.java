@@ -31,5 +31,5 @@ public final class Namespaces {
 	public static final String XS_NS = "http://www.w3.org/2001/XMLSchema";
 	public static final String XML_NS = "http://www.w3.org/XML/1998/namespace";
 	public static final String KSCS_BINDINGS_NS = "http://www.kscs.com/util/jaxb/bindings";
-	public static final String JAXB_NS = "http://java.sun.com/xml/ns/jaxb";
+	public static final String JAXB_NS = "https://jakarta.ee/xml/ns/jaxb";
 }

@@ -106,37 +106,23 @@ public abstract class AbstractPlugin extends Plugin {
 		return options;
 	}
 
+	public boolean isForPlugin(final String arg) {
+		return arg.toLowerCase().startsWith("-" + getOptionName().substring(1).toLowerCase() + ".");
+	}
 
 	@Override
 	public int parseArgument(final Options opt, final String[] args, final int i) throws BadCommandLineException, IOException {
 		int count = 0;
-		if (('-' + getOptionName()).equals(args[i])) {
-			count = parseOptions(args, i + 1) +1;
-		}
-		return count;
-	}
-
-	private int parseOptions(final String[] args, final int startIndex) throws BadCommandLineException {
-		int count = 0;
-		for (int i = startIndex; i < args.length && !isEndOfPluginArgs(args[i]); i++) {
-			final String currentArg = args[i];
+		final String currentArg = args[i];
+		if (isForPlugin(currentArg)) {
 			boolean hasMatch = false;
 			for (final Option<?> option : this.options) {
-				if (option.matches(currentArg)) {
-					i++;
-					if (args.length > i && !args[i].startsWith("-")) {
-						option.setStringValue(args[i]);
-						count += 2;
-						hasMatch = true;
-					} else {
-						throw new BadCommandLineException(MessageFormat.format(this.baseResourceBundle.getString("exception.missingArgument"), getOptionName().substring(1), option.getName()));
-					}
-				} else if (option.tryParse(currentArg)) {
+				if (option.tryParse(currentArg)) {
 					hasMatch = true;
 					count++;
 				}
 			}
-			if(!hasMatch) {
+			if (!hasMatch) {
 				throw new BadCommandLineException(MessageFormat.format(this.baseResourceBundle.getString("exception.unrecognizedArgument"), getOptionName().substring(1), currentArg));
 			}
 		}
@@ -156,7 +142,6 @@ public abstract class AbstractPlugin extends Plugin {
 		}
 		return pluginUsageBuilder.build();
 	}
-
 
 	protected String getMessage(final String key, final Object... args) {
 		return MessageFormat.format(this.resourceBundle.getString(key), args);
