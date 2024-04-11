@@ -24,11 +24,13 @@
 
 package com.kscs.util.plugins.xjc.base;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.util.Locale;
-import java.util.ResourceBundle;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -118,7 +120,7 @@ public class HtmlUsageBuilder extends PluginUsageBuilder {
 		final String key = this.keyBase + "." + transformName(option.getName());
 		final Element dt = newElement(this.dl, "dt");
 		newElement(dt, "a").setAttribute("name", this.pluginName + "." + option.getName());
-		newText(dt, "-" + option.getName() + "=");
+		newText(dt, "-" + option.getPluginName() + "." + option.getName() + "=");
 		newElement(dt, "span", option.getChoice()).setAttribute("class","choice");
 		newElement(dt, "span", option.getStringValue()).setAttribute("class", "default");
 		newElement(this.dl, "dd", this.resourceBundle.getString(key));

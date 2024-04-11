@@ -108,12 +108,11 @@ public class PluginDocumentationFormatter {
 			w.println(a.arg(this.plugin.getOptionName()));
 			for (final Option option : this.plugin.getOptions()) {
 				w.print(a.tab(tabAmount + 1));
-				w.println(a.arg(option.getName() + "=" + option.getStringValue()));
+				w.println(a.arg(option.getPluginName() + "." + option.getName() + "=" + option.getStringValue()));
 			}
 			w.flush();
 			return sw.toString();
 		}
 	}
-
 
 }

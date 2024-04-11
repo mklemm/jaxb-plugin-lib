@@ -60,8 +60,8 @@ public class MarkdownPluginUsageBuilder extends PluginUsageBuilder {
 		}
 		final String key = this.keyBase + "." + transformName(option.getName());
 		this.writer.println();
-		this.writer.print("##### -");
-		this.writer.println(option.getName() + "=`" + option.getChoice() + "` (" + option.getStringValue() + ")");
+		this.writer.print("##### -" );
+		this.writer.println(option.getPluginName() + "." + option.getName() + "=`" + option.getChoice() + "` (" + option.getStringValue() + ")");
 		this.writer.println(this.resourceBundle.getString(key));
 		this.writer.println();
 		return this;

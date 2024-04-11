@@ -61,7 +61,7 @@ public class PlainTextUsageBuilder extends PluginUsageBuilder {
 		final String key = this.keyBase + "." + transformName(option.getName());
 		this.writer.println();
 		this.writer.print("\t-");
-		this.writer.println(option.getName() + "=" + option.getChoice()+ " (" + option.getStringValue() + ")");
+		this.writer.println(option.getPluginName() + "." + option.getName() + "=" + option.getChoice()+ " (" + option.getStringValue() + ")");
 		for (final String line : chopLines(PlainTextUsageBuilder.INDENT_MAX_LINE_LENGTH, this.resourceBundle.getString(key))) {
 			this.writer.print("\t\t");
 			this.writer.println(line);

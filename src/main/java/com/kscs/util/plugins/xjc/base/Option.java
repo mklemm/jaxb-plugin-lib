@@ -49,6 +49,10 @@ public abstract class Option<T> {
 		return this.name;
 	}
 
+	public String getPluginName() {
+		return this.plugin.getOptionName().substring(1);
+	}
+
 	public abstract void setStringValue(final String s);
 	public abstract String getStringValue();
 
