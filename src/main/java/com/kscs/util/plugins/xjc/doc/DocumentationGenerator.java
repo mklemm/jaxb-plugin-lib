@@ -32,6 +32,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -110,6 +111,7 @@ public final class DocumentationGenerator {
 					ps.printf("[%d]: #%s\n", i++, plugin.getPlugin().getOptionName().substring(1));
 				}
 			}
+			Files.copy(readme, (readme.getParent() == null ? Path.of("..") : readme.getParent()).resolve(readme.getFileName()), StandardCopyOption.REPLACE_EXISTING);
 		}
 	}
 
